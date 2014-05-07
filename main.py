@@ -86,16 +86,13 @@ def solve(W):
         # 현재 온도를 계산한다. 온도는 경과 시간에 맞춰 변화한다.
         # t = (time_limit - latest_time) / TIME_LIMIT * initial_temp
         # 온도를 선형보다 빨리 낮춘다
-        t = ((time_limit - latest_time) / TIME_LIMIT) ** 2 * initial_temp
+        # t = ((time_limit - latest_time) / TIME_LIMIT) ** 2 * initial_temp
         # t = ((time_limit - latest_time) / TIME_LIMIT) ** 1.5 * initial_temp
-        # t = ((time_limit - latest_time) / TIME_LIMIT) ** 3 * initial_temp
+        t = ((time_limit - latest_time) / TIME_LIMIT) ** 3 * initial_temp
 
         # TODO: 다른 perturbation 방법을 적용해 본다
         # TODO: 점수 계산을 더 빨리 해본다
-        if randint(0, 3) == 0:
-            new_score, new_sol = perturb(W, sol, current_score)
-        else:
-            new_score, new_sol = perturb2(W, sol, current_score)
+        new_score, new_sol = perturb2(W, sol, current_score)
         
         # 최적해 갱신되었는가?
         if new_score > best_score:
