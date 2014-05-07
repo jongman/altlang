@@ -31,6 +31,27 @@ def perturb(W, perm, current_score):
 
     return current_score, perturbed
 
+def perturb2(W, perm, current_score):
+    "두 원소의 위치를 바꾸는 대신 한 원소를 골라 다른 곳에 끼워넣는다."
+    
+    n = len(W)
+    i, j = randint(0, n-1), randint(0, n-1)
+    perturbed = list(perm)
+    
+    # perturbed[i]가 perturbed[j]로 간다
+    moved = perturbed[i]
+    if i < j:
+        for k in xrange(i, j):
+            perturbed[k] = perturbed[k+1]
+            current_score += W[perturbed[k]][moved] - W[moved][perturbed[k]] 
+        perturbed[j] = moved
+    elif i > j:
+        for k in xrange(i, j, -1):
+            perturbed[k] = perturbed[k-1]
+            current_score += W[moved][perturbed[k]] - W[perturbed[k]][moved] 
+        perturbed[j] = moved
+    return current_score, perturbed
+
 def solve(W):
     "점수 배열 W가 주어질 때 가능한 좋은 답을 찾는다."
 
@@ -65,13 +86,14 @@ def solve(W):
         # 현재 온도를 계산한다. 온도는 경과 시간에 맞춰 변화한다.
         # t = (time_limit - latest_time) / TIME_LIMIT * initial_temp
         # 온도를 선형보다 빨리 낮춘다
-        # t = ((time_limit - latest_time) / TIME_LIMIT) ** 2 * initial_temp
+        t = ((time_limit - latest_time) / TIME_LIMIT) ** 2 * initial_temp
         # t = ((time_limit - latest_time) / TIME_LIMIT) ** 1.5 * initial_temp
-        t = ((time_limit - latest_time) / TIME_LIMIT) ** 3 * initial_temp
+        # t = ((time_limit - latest_time) / TIME_LIMIT) ** 3 * initial_temp
 
         # TODO: 다른 perturbation 방법을 적용해 본다
         # TODO: 점수 계산을 더 빨리 해본다
-        new_score, new_sol = perturb(W, sol, current_score)
+        # new_score, new_sol = perturb(W, sol, current_score)
+        new_score, new_sol = perturb2(W, sol, current_score)
         
         # 최적해 갱신되었는가?
         if new_score > best_score:
