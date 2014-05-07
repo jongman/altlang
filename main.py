@@ -28,7 +28,7 @@ def solve(W):
 
     # 초기 온도를 정한다
     # TODO: 크기에 따라 초기 온도를 바꿔본다
-    initial_temp = 500
+    initial_temp = 750
 
     start_time = time()
     time_limit = start_time + TIME_LIMIT
