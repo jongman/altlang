@@ -12,6 +12,25 @@ def score(W, perm):
                for j in xrange(len(W))
                for i in xrange(j))
 
+def perturb(W, perm, current_score):
+    "순열을 적당히 바꾼 결과와 새 점수를 반환한다."
+    n = len(W)
+    i, j = randint(0, n-1), randint(0, n-1)
+    if i > j: i, j = j, i
+    
+    perturbed = list(perm)
+    perturbed[i], perturbed[j] = a, b = perturbed[j], perturbed[i]
+    
+    # .. b [] [] [] [] a .. 에서
+    # .. a [] [] [] [] b .. 로 바뀌었을 때 점수 변화는?
+    for k in xrange(i+1, j):
+        m = perturbed[k]
+        current_score += W[m][b] - W[b][m]
+        current_score += W[a][m] - W[m][a]
+    current_score += W[a][b] - W[b][a]
+
+    return current_score, perturbed
+
 def solve(W):
     "점수 배열 W가 주어질 때 가능한 좋은 답을 찾는다."
 
@@ -52,27 +71,23 @@ def solve(W):
 
         # TODO: 다른 perturbation 방법을 적용해 본다
         # TODO: 점수 계산을 더 빨리 해본다
-        i, j = randint(0, n-1), randint(0, n-1)
-        if i == j: continue
-        sol[i], sol[j] = sol[j], sol[i]
-        new_score = score(W, sol)
+        new_score, new_sol = perturb(W, sol, current_score)
         
         # 최적해 갱신되었는가?
         if new_score > best_score:
-            print ' time %.2lf iteration %d: best score update %.4lf => %.4lf' % \
-                    (elapsed, iterations, best_score, new_score)
+            # print ' time %.2lf iteration %d: best score update %.4lf => %.4lf' % \
+            #         (elapsed, iterations, best_score, new_score)
             best_score = new_score
-            best = list(sol)
+            best = list(new_sol)
 
         # 이 변화를 받아들일 것인가?
         # TODO: 입력 크기에 비례해 받아들일지 결정하기
         if ((new_score > current_score) or
             (t > 0 and exp((new_score - current_score) / t) >= random())):
             current_score = new_score
-        else:
-            sol[i], sol[j] = sol[j], sol[i]
+            sol = new_sol
 
-    print 'ran %d iterations' % iterations
+    print 'ran %d iterations. score %.4lf' % (iterations, best_score)
     return best
 
 def read_data(filename):
@@ -93,7 +108,7 @@ def testbench():
         print f, 'n =', n
         perm = solve(W)
         avg_score = score(W, perm) / (n * sqrt(n * log(n) - n))
-        print 'score = %.4lf' % avg_score
+        print 'raw score = %.4lf avg score = %.4lf' % (score(W, perm), avg_score)
         scores.append(avg_score)
 
     print 'Scores =', scores
