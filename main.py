@@ -28,7 +28,7 @@ def solve(W):
 
     # 초기 온도를 정한다
     # TODO: 크기에 따라 초기 온도를 바꿔본다
-    initial_temp = 50
+    initial_temp = 1
 
     start_time = time()
     time_limit = start_time + TIME_LIMIT
@@ -38,13 +38,15 @@ def solve(W):
         if iterations % 100 == 0:
             latest_time = time()
             elapsed = latest_time - start_time
+            remaining = time_limit - latest_time
             if latest_time >= time_limit:
                 break
         iterations += 1
 
         # 현재 온도를 계산한다. 온도는 경과 시간에 맞춰 변화한다.
-        # TODO: 선형 외 다른 온도 낮추는 방법을 사용해 본다
-        t = (time_limit - latest_time) / TIME_LIMIT * initial_temp
+        # t = (time_limit - latest_time) / TIME_LIMIT * initial_temp
+        # 온도를 선형보다 빨리 낮춘다
+        t = ((time_limit - latest_time) / TIME_LIMIT) ** 2 * initial_temp
 
         # TODO: 다른 perturbation 방법을 적용해 본다
         # TODO: 점수 계산을 더 빨리 해본다
@@ -62,8 +64,8 @@ def solve(W):
 
         # 이 변화를 받아들일 것인가?
         # TODO: 입력 크기에 비례해 받아들일지 결정하기
-        if ((t > 1e-8 and exp((new_score - current_score) / t) >= random()) or
-            (t <= 1e-8 and new_score > current_score)):
+        if ((new_score > current_score) or
+            (t > 0 and exp((new_score - current_score) / t) >= random())):
             current_score = new_score
         else:
             sol[i], sol[j] = sol[j], sol[i]
