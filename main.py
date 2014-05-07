@@ -69,7 +69,7 @@ def solve(W):
 
     # 초기 온도를 정한다
     # TODO: 크기에 따라 초기 온도를 바꿔본다
-    initial_temp = 1 
+    initial_temp = 1
 
     start_time = time()
     time_limit = start_time + TIME_LIMIT
@@ -105,7 +105,7 @@ def solve(W):
         # 이 변화를 받아들일 것인가?
         # TODO: 입력 크기에 비례해 받아들일지 결정하기
         if ((new_score > current_score) or
-            (t > 0 and exp((new_score - current_score) / sqrtn / t) >= random())):
+            (t > 0 and exp((new_score - current_score) / n / t) >= random())):
             current_score = new_score
             sol = new_sol
 
