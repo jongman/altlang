@@ -4,7 +4,7 @@ from time import time
 from math import exp
 from random import random, randint, seed
 
-TIME_LIMIT = 10
+TIME_LIMIT = 3
 
 def score(W, perm):
     "순열과 점수 배열이 주어질 떄 점수를 반환한다."
