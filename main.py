@@ -2,7 +2,7 @@
 from glob import glob
 from time import time
 from math import exp
-from random import random, randint
+from random import random, randint, seed
 
 TIME_LIMIT = 10
 
@@ -76,6 +76,7 @@ def read_data(filename):
 
 def testbench():
     "data 디렉토리의 모든 파일을 읽어들여 풀어본다."
+    seed(0xdeadbeef)
     scores = []
     for f in glob('data/input*.txt'):
         W = read_data(f)
