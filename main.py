@@ -1,18 +1,70 @@
 # -*- coding: utf-8 -*-
 from glob import glob
 from time import time
+from math import exp
+from random import random, randint
 
 TIME_LIMIT = 10
-
-def solve(W):
-    "점수 배열 W가 주어질 때 가능한 좋은 답을 찾는다."
-    return range(len(W))
 
 def score(W, perm):
     "순열과 점수 배열이 주어질 떄 점수를 반환한다."
     return sum(W[perm[i]][perm[j]]
                for j in xrange(len(W))
                for i in xrange(j))
+
+def solve(W):
+    "점수 배열 W가 주어질 때 가능한 좋은 답을 찾는다."
+
+    n = len(W)
+
+    # 초기해를 정한다
+    # TODO: 그리디로 초기해를 정해본다
+    sol = range(n)
+    current_score = score(W, sol)
+
+    # 현재까지의 최적해를 저장한다
+    best = list(sol)
+    best_score = current_score
+
+    # 초기 온도를 정한다
+    # TODO: 크기에 따라 초기 온도를 바꿔본다
+    initial_temp = 1000
+
+    time_limit = time() + TIME_LIMIT
+    
+    iterations = 0
+    while True:
+        if iterations % 100 == 0:
+            latest_time = time()
+            if latest_time >= time_limit:
+                break
+        iterations += 1
+
+        # 현재 온도를 계산한다. 온도는 경과 시간에 맞춰 변화한다.
+        # TODO: 선형 외 다른 온도 낮추는 방법을 사용해 본다
+        t = (time_limit - latest_time) / TIME_LIMIT * initial_temp
+
+        # TODO: 다른 perturbation 방법을 적용해 본다
+        # TODO: 점수 계산을 더 빨리 해본다
+        i, j = randint(0, n-1), randint(0, n-1)
+        if i == j: continue
+        sol[i], sol[j] = sol[j], sol[i]
+        new_score = score(W, sol)
+        
+        # 최적해 갱신되었는가?
+        if new_score > best_score:
+            print ' best score update %.4lf => %.4lf' % (best_score, new_score)
+            best_score = new_score
+            best = list(sol)
+
+        # 이 변화를 받아들일 것인가?
+        if exp((new_score - current_score) / t) >= random():
+            current_score = new_score
+        else:
+            sol[i], sol[j] = sol[j], sol[i]
+
+    print 'ran %d iterations' % iterations
+    return best
 
 def read_data(filename):
     "파일 경로가 주어질 때 점수 배열 W를 읽어들인다."
@@ -24,11 +76,17 @@ def read_data(filename):
 
 def testbench():
     "data 디렉토리의 모든 파일을 읽어들여 풀어본다."
+    scores = []
     for f in glob('data/input*.txt'):
         W = read_data(f)
         print f, 'n =', len(W)
         perm = solve(W)
-        print 'score = %.4lf' % score(W, perm)
+        # 각 숫자 쌍마다의 평균 점수를 구한다
+        avg_score = score(W, perm) / (len(W) * (len(W) - 1) / 2)
+        print 'score = %.4lf' % avg_score
+        scores.append(avg_score)
+
+    print 'Average = %.4lf' % (sum(scores) / len(scores))
 
 
 if __name__ == '__main__':
