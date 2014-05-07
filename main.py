@@ -68,7 +68,7 @@ def solve(W):
 
     # 초기 온도를 정한다
     # TODO: 크기에 따라 초기 온도를 바꿔본다
-    initial_temp = 10 
+    initial_temp = 1 
 
     start_time = time()
     time_limit = start_time + TIME_LIMIT
@@ -92,8 +92,10 @@ def solve(W):
 
         # TODO: 다른 perturbation 방법을 적용해 본다
         # TODO: 점수 계산을 더 빨리 해본다
-        # new_score, new_sol = perturb(W, sol, current_score)
-        new_score, new_sol = perturb2(W, sol, current_score)
+        if randint(0, 3) == 0:
+            new_score, new_sol = perturb(W, sol, current_score)
+        else:
+            new_score, new_sol = perturb2(W, sol, current_score)
         
         # 최적해 갱신되었는가?
         if new_score > best_score:
