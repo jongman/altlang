@@ -28,7 +28,7 @@ def solve(W):
 
     # 초기 온도를 정한다
     # TODO: 크기에 따라 초기 온도를 바꿔본다
-    initial_temp = 0.5
+    initial_temp = 1 
 
     start_time = time()
     time_limit = start_time + TIME_LIMIT
@@ -47,6 +47,8 @@ def solve(W):
         # t = (time_limit - latest_time) / TIME_LIMIT * initial_temp
         # 온도를 선형보다 빨리 낮춘다
         t = ((time_limit - latest_time) / TIME_LIMIT) ** 2 * initial_temp
+        # t = ((time_limit - latest_time) / TIME_LIMIT) ** 1.5 * initial_temp
+        # t = ((time_limit - latest_time) / TIME_LIMIT) ** 3 * initial_temp
 
         # TODO: 다른 perturbation 방법을 적용해 본다
         # TODO: 점수 계산을 더 빨리 해본다
