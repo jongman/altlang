@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from glob import glob
 from time import time
-from math import exp
+from math import exp, sqrt, log
 from random import random, randint, seed
 
 TIME_LIMIT = 3
@@ -83,10 +83,10 @@ def testbench():
     scores = []
     for f in glob('data/input*.txt'):
         W = read_data(f)
-        print f, 'n =', len(W)
+        n = len(W)
+        print f, 'n =', n
         perm = solve(W)
-        # 각 숫자 쌍마다의 평균 점수를 구한다
-        avg_score = score(W, perm) / (len(W) * (len(W) - 1) / 2)
+        avg_score = score(W, perm) / (n * sqrt(n * log(n) - n))
         print 'score = %.4lf' % avg_score
         scores.append(avg_score)
 
