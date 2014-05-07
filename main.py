@@ -30,12 +30,14 @@ def solve(W):
     # TODO: 크기에 따라 초기 온도를 바꿔본다
     initial_temp = 1000
 
-    time_limit = time() + TIME_LIMIT
+    start_time = time()
+    time_limit = start_time + TIME_LIMIT
     
     iterations = 0
     while True:
         if iterations % 100 == 0:
             latest_time = time()
+            elapsed = latest_time - start_time
             if latest_time >= time_limit:
                 break
         iterations += 1
@@ -53,7 +55,8 @@ def solve(W):
         
         # 최적해 갱신되었는가?
         if new_score > best_score:
-            print ' best score update %.4lf => %.4lf' % (best_score, new_score)
+            print ' time %.2lf iteration %d: best score update %.4lf => %.4lf' % \
+                    (elapsed, iterations, best_score, new_score)
             best_score = new_score
             best = list(sol)
 
