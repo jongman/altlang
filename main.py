@@ -2,7 +2,7 @@
 from glob import glob
 from time import time
 from math import exp, sqrt, log
-from random import random, randint, seed
+from random import random, randint, seed, shuffle
 
 TIME_LIMIT = 9
 
@@ -94,7 +94,8 @@ def solve(W, time_limit):
     # 초기해를 정한다
     # TODO: 그리디로 초기해를 정해본다
     # sol = range(n)
-    sol = greedy(W)
+    # sol = greedy(W)
+    sol = range(n); shuffle(sol) 
     current_score = score(W, sol)
 
     # 현재까지의 최적해를 저장한다
@@ -109,6 +110,7 @@ def solve(W, time_limit):
     until = start_time + time_limit
     
     iterations = 0
+    best_at = -1
     while True:
         if iterations % 100 == 0:
             latest_time = time()
@@ -129,8 +131,8 @@ def solve(W, time_limit):
         # TODO: 점수 계산을 더 빨리 해본다
 
         # new_score, new_sol = perturb(W, sol, current_score)
-        # new_score, new_sol = perturb2(W, sol, current_score)
-        new_score, new_sol = perturb3(W, sol, current_score)
+        new_score, new_sol = perturb2(W, sol, current_score)
+        # new_score, new_sol = perturb3(W, sol, current_score)
         # if randint(0, 4) == 0:
         #     new_score, new_sol = perturb(W, sol, current_score)
         # else:
@@ -143,15 +145,18 @@ def solve(W, time_limit):
             #         (elapsed, iterations, best_score, new_score)
             best_score = new_score
             best = list(new_sol)
+            best_at = iterations
 
         # 이 변화를 받아들일 것인가?
         # TODO: 입력 크기에 비례해 받아들일지 결정하기
+        # TODO: 마지막으로 움직인 지 x차례 이상 되었으면 그냥 움직이기
         if ((new_score > current_score) or
             (t > 0 and exp((new_score - current_score) / t) >= random())):
             current_score = new_score
             sol = new_sol
 
-    print 'ran %d iterations. score %.4lf' % (iterations, best_score)
+    print 'ran %d iterations. best found at iteration #%d. score %.4lf' % \
+            (iterations, best_at, best_score)
     return best
 
 def solve_multi(W, n):
