@@ -52,6 +52,39 @@ def perturb2(W, perm, current_score):
         perturbed[j] = moved
     return current_score, perturbed
 
+def perturb3(W, perm, current_score):
+    "인접한 두 원소의 위치를 바꾼다."
+    n = len(W)
+    i = randint(0, n-2)
+    j = i+1o
+    perturbed = list(perm)
+    perturbed[i], perturbed[j] = a, b = perturbed[j], perturbed[i]
+    return current_score + W[a][b] - W[b][a], perturbed
+
+
+def greedy(W):
+    "탐욕법으로 적당한 근사해를 만든다."
+    n = len(W)
+    remaining = range(n)
+    ret = []
+
+    for i in xrange(n):
+        max_sum = -1e8
+        best = -1
+        for cand in remaining:
+            cand_sum = 0
+            for other in remaining:
+                if other != cand:
+                    cand_sum += W[cand][other]
+            if cand_sum > max_sum:
+                max_sum = cand_sum
+                best = cand
+
+        remaining.remove(best)
+        ret.append(best)
+
+    return ret
+
 def solve(W, time_limit):
     "점수 배열 W가 주어질 때 가능한 좋은 답을 찾는다."
 
@@ -60,7 +93,8 @@ def solve(W, time_limit):
 
     # 초기해를 정한다
     # TODO: 그리디로 초기해를 정해본다
-    sol = range(n)
+    # sol = range(n)
+    sol = greedy(W)
     current_score = score(W, sol)
 
     # 현재까지의 최적해를 저장한다
@@ -93,7 +127,15 @@ def solve(W, time_limit):
 
         # TODO: 다른 perturbation 방법을 적용해 본다
         # TODO: 점수 계산을 더 빨리 해본다
+
+        # new_score, new_sol = perturb(W, sol, current_score)
         new_score, new_sol = perturb2(W, sol, current_score)
+        # new_score, new_sol = perturb3(W, sol, current_score)
+        # if randint(0, 4) == 0:
+        #     new_score, new_sol = perturb(W, sol, current_score)
+        # else:
+        #     new_score, new_sol = perturb2(W, sol, current_score)
+
         
         # 최적해 갱신되었는가?
         if new_score > best_score:
