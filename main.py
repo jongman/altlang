@@ -4,7 +4,7 @@ from time import time
 from math import exp, sqrt, log
 from random import random, randint, seed
 
-TIME_LIMIT = 3
+TIME_LIMIT = 9
 
 def score(W, perm):
     "순열과 점수 배열이 주어질 떄 점수를 반환한다."
@@ -52,7 +52,7 @@ def perturb2(W, perm, current_score):
         perturbed[j] = moved
     return current_score, perturbed
 
-def solve(W):
+def solve(W, time_limit):
     "점수 배열 W가 주어질 때 가능한 좋은 답을 찾는다."
 
     n = len(W)
@@ -69,27 +69,27 @@ def solve(W):
 
     # 초기 온도를 정한다
     # TODO: 크기에 따라 초기 온도를 바꿔본다
-    initial_temp = 1
+    initial_temp = sqrt(n) / 5.0
 
     start_time = time()
-    time_limit = start_time + TIME_LIMIT
+    until = start_time + time_limit
     
     iterations = 0
     while True:
         if iterations % 100 == 0:
             latest_time = time()
             elapsed = latest_time - start_time
-            remaining = time_limit - latest_time
-            if latest_time >= time_limit:
+            remaining = until - latest_time
+            if latest_time >= until:
                 break
         iterations += 1
 
         # 현재 온도를 계산한다. 온도는 경과 시간에 맞춰 변화한다.
-        # t = (time_limit - latest_time) / TIME_LIMIT * initial_temp
+        # t = (until - latest_time) / time_limit * initial_temp
         # 온도를 선형보다 빨리 낮춘다
-        t = ((time_limit - latest_time) / TIME_LIMIT) ** 2 * initial_temp
-        # t = ((time_limit - latest_time) / TIME_LIMIT) ** 1.5 * initial_temp
-        # t = ((time_limit - latest_time) / TIME_LIMIT) ** 3 * initial_temp
+        t = ((until - latest_time) / time_limit) ** 2 * initial_temp
+        # t = ((until - latest_time) / time_limit) ** 1.5 * initial_temp
+        # t = ((until - latest_time) / time_limit) ** 3 * initial_temp
 
         # TODO: 다른 perturbation 방법을 적용해 본다
         # TODO: 점수 계산을 더 빨리 해본다
@@ -105,12 +105,19 @@ def solve(W):
         # 이 변화를 받아들일 것인가?
         # TODO: 입력 크기에 비례해 받아들일지 결정하기
         if ((new_score > current_score) or
-            (t > 0 and exp((new_score - current_score) / n / t) >= random())):
+            (t > 0 and exp((new_score - current_score) / t) >= random())):
             current_score = new_score
             sol = new_sol
 
     print 'ran %d iterations. score %.4lf' % (iterations, best_score)
     return best
+
+def solve_multi(W, n):
+    "길게 한번 대신 짧게 여러번 돌린다."
+
+    solutions = [solve(W, TIME_LIMIT/n) for i in xrange(n)]
+    return max(solutions, key=lambda s: score(W, s))
+
 
 def read_data(filename):
     "파일 경로가 주어질 때 점수 배열 W를 읽어들인다."
@@ -128,7 +135,8 @@ def testbench():
         W = read_data(f)
         n = len(W)
         print f, 'n =', n
-        perm = solve(W)
+        perm = solve_multi(W, 3)
+        # perm = solve(W, TIME_LIMIT)
         avg_score = score(W, perm) / (n * sqrt(n * log(n) - n))
         print 'raw score = %.4lf avg score = %.4lf' % (score(W, perm), avg_score)
         scores.append(avg_score)
