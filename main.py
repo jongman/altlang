@@ -110,7 +110,7 @@ def solve(W, time_limit):
     until = start_time + time_limit
     
     iterations = 0
-    best_at = -1
+    last_moved_at = best_at = -1
     while True:
         if iterations % 100 == 0:
             latest_time = time()
@@ -151,8 +151,10 @@ def solve(W, time_limit):
         # TODO: 입력 크기에 비례해 받아들일지 결정하기
         # TODO: 마지막으로 움직인 지 x차례 이상 되었으면 그냥 움직이기
         if ((new_score > current_score) or
+            (iterations - last_moved_at > 100) or
             (t > 0 and exp((new_score - current_score) / t) >= random())):
             current_score = new_score
+            last_moved_at = iterations
             sol = new_sol
 
     print 'ran %d iterations. best found at iteration #%d. score %.4lf' % \
