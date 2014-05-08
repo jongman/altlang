@@ -56,7 +56,7 @@ def perturb3(W, perm, current_score):
     "인접한 두 원소의 위치를 바꾼다."
     n = len(W)
     i = randint(0, n-2)
-    j = i+1o
+    j = i+1
     perturbed = list(perm)
     perturbed[i], perturbed[j] = a, b = perturbed[j], perturbed[i]
     return current_score + W[a][b] - W[b][a], perturbed
@@ -129,8 +129,8 @@ def solve(W, time_limit):
         # TODO: 점수 계산을 더 빨리 해본다
 
         # new_score, new_sol = perturb(W, sol, current_score)
-        new_score, new_sol = perturb2(W, sol, current_score)
-        # new_score, new_sol = perturb3(W, sol, current_score)
+        # new_score, new_sol = perturb2(W, sol, current_score)
+        new_score, new_sol = perturb3(W, sol, current_score)
         # if randint(0, 4) == 0:
         #     new_score, new_sol = perturb(W, sol, current_score)
         # else:
